@@ -15,7 +15,7 @@ async def upload_job(file: UploadFile = File(...)):
     #Validate file extension input
     if not file.filename.endswith('.csv'):
         raise HTTPException(
-            status_code = status.HTTp_400_BAD_REQUEST,
+            status_code = status.HTTP_400_BAD_REQUEST,
             detail = "Invalid file type. Only CSV files are allowed" 
         )
         
@@ -38,3 +38,17 @@ async def upload_job(file: UploadFile = File(...)):
     database.create_job(job_id, "csv_summary", str(file_path))
     
     return {"job_id" : job_id, "status": "pending"}
+
+
+@app.get("/v1/jobs/{job_id}")
+async def get_job(job_id):
+    
+    job = database.get_job(job_id)
+    
+    if job is None:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "job not found, please enter a job that exists"
+        )
+    
+    return database.get_job(job_id)

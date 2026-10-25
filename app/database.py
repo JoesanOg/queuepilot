@@ -50,3 +50,23 @@ def create_job(job_id, job_type, input_path):
     
     finally:
         con.close()
+        
+        
+
+def get_job(job_id):
+    
+    try:
+        con = sqlite3.connect(db_path)
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
+        cur.execute("SELECT * FROM jobs WHERE id = ?", (job_id,))
+        job = cur.fetchone()
+        con.commit()
+        
+        if job is None:
+            return None
+        
+        return dict(job)
+    
+    finally:
+        con.close()
